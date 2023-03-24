@@ -2,11 +2,50 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
     <meta charset="UTF-8">
+    <link th:href="@{/main.css}" rel="stylesheet">
     <title>Superheroes</title>
 </head>
 <body>
 
-<h1>Superhero List</h1>
+<h1 class="list_h1">Superhero List</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Hero name</th>
+        <th>Real name</th>
+        <th>Creation year</th>
+        <th>Superpowers</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="superheroList: ${superheroList}">
+        <td th:text="${superheroList.heroName}"></td>
+        <td th:text="${superheroList.realName}"></td>
+        <td th:text="${superheroList.creationYear}"></td>
+        <td>
+            <a th:href="@{superheroes/powers/{heroName}(heroName=${superheroList.heroName})}">
+                <button type="button">Powers</button>
+            </a>
+        </td>
+        <td>
+            <a th:href="@{superheroes/update/{heroName}(heroName=${superheroList.heroName})}">
+                <button class="update" type="button">Update</button>
+            </a>
+        </td>
+
+        <td>
+            <a th:href="@{superheroes/slet/{heroName}(heroName=${superheroList.heroName})}">
+                <button class="slet" type="button" onclick="return confirm('Er du sikker?')">Delete</button>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+        <a href="/register">
+            <button type="button">Create a Superhero</button>
+        </a>
 
 </body>
 </html>

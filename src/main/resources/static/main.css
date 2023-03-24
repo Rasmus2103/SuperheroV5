@@ -1,0 +1,133 @@
+@keyframes color {
+    0%   { background: #33CCCC; }
+    20%  { background: #33CC36; }
+    40%  { background: #B8CC33; }
+    60%  { background: #FCCA00; }
+    80%  { background: #33CC36; }
+    100% { background: #33CCCC; }
+}
+
+body {
+    background: #33CCCC; /* Fallback */
+    animation: color 9s infinite linear;
+    padding: 2em;
+}
+
+h1 {
+    font-family: Impact, serif;
+}
+
+.fa-circle-left {
+    font-size:30px;
+}
+
+
+.list_h1 {
+    background-color: #f2f2f2;
+    border:1px solid black;
+    border-radius:4px;
+    width:20%;
+    padding:10px;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 70%;
+    background-color:#f2f2f2;
+}
+
+thead {
+    background-color:lightgray;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+label {
+    width: 150px;
+    display: inline-block;
+    margin-top:20px;
+    font-family:arial, sans-serif;;
+    font-weight: bold;
+}
+
+input[type=text], div, select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+form {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+    width:50%;
+    margin:auto;
+}
+
+.create_h1   {
+    text-align: center;
+}
+
+button {
+    background-color: #4b4b46;
+    border-radius: 12px;
+    color: white;
+    padding: 10px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 6px 4px;
+    cursor: pointer;
+}
+
+.powers {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 40%;
+    background-color:#f2f2f2;
+    margin:auto;
+}
+
+.powers_h1 {
+    text-align: center;
+}
+
+.powers td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    display:block;
+}
+
+.created_hero {
+    margin:auto;
+    border:1px solid black;
+}
+
+.created_hero h1 {
+    font-size:20px;
+    font-family: sans-serif;
+    border-bottom: 1px solid black;
+    background-color: #f2f2f2;
+    width:20%;
+}
+
+.slet {
+    color:white;
+    background-color: darkred;
+}
+
+.update {
+    color:white;
+    background-color:darkblue;
+}
