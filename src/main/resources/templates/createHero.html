@@ -11,13 +11,13 @@
 
 <form action="/register"  method="post" th:object="${superhero}">
     <label>Hero Name:</label>
-    <input type="text" th:field="*{heroName}" /><br/>
+    <input type="text" th:field="*{heroName}"/><br/>
 
     <label>Real Name:</label>
-    <input type="text" th:field="*{realName}" /><br/>
+    <input type="text" th:field="*{realName}"/><br/>
 
     <label>Creation Year:</label>
-    <input type="text" th:field="*{creationYear}" /><br/>
+    <input type="text" th:field="*{creationYear}"/><br/>
 
     <label>City:</label>
     <select th:field="*{city}">

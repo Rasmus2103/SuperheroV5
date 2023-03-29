@@ -7,7 +7,7 @@ public class Superhero {
     private String realName;
     private int creationYear;
 
-    public Superhero(String heroName, String realName, int creationYear) {
+    public Superhero(int id, String heroName, String realName, int creationYear) {
         this.id = id;
         this.heroName = heroName;
         this.realName = realName;
@@ -15,6 +15,10 @@ public class Superhero {
     }
 
     //Get metoder
+    public int getId() {
+        return id;
+    }
+
     public String getHeroName() {
         return heroName;
     }
@@ -28,6 +32,9 @@ public class Superhero {
     }
 
     //Set metoder
+    public void setId(int id) {
+        this.id = id;
+    }
     public void setHeroName(String heroName) {
         this.heroName = heroName;
     }

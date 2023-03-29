@@ -35,6 +35,7 @@ table {
     border-collapse: collapse;
     width: 70%;
     background-color:#f2f2f2;
+    border:2px solid black;
 }
 
 thead {

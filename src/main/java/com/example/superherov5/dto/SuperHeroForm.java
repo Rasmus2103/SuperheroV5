@@ -76,4 +76,16 @@ public class SuperHeroForm {
     public void setPowerList(List<String> powerList) {
         this.powerList = powerList;
     }
+
+    @Override
+    public String toString() {
+        return "SuperHeroForm{" +
+                "heroId=" + heroId +
+                ", heroName='" + heroName + '\'' +
+                ", realName='" + realName + '\'' +
+                ", creationYear=" + creationYear +
+                ", city='" + city + '\'' +
+                ", powerList=" + powerList +
+                '}';
+    }
 }

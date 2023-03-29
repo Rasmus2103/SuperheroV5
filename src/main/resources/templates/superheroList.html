@@ -25,20 +25,21 @@
         <td th:text="${superheroList.realName}"></td>
         <td th:text="${superheroList.creationYear}"></td>
         <td>
-            <a th:href="@{superheroes/powers/{heroName}(heroName=${superheroList.heroName})}">
+            <a th:href="@{superheroes/powers/{heroId}(heroId=${superheroList.id})}">
                 <button type="button">Powers</button>
             </a>
         </td>
         <td>
-            <a th:href="@{superheroes/update/{heroName}(heroName=${superheroList.heroName})}">
-                <button class="update" type="button">Update</button>
+            <a th:href="@{/update/{id}(id=${superheroList.id})}">
+                <button class="update" type="button">Update hero</button>
             </a>
         </td>
 
         <td>
-            <a th:href="@{superheroes/slet/{heroName}(heroName=${superheroList.heroName})}">
-                <button class="slet" type="button" onclick="return confirm('Er du sikker?')">Delete</button>
+            <a th:href="@{/superheroes/slet/{heroId}(heroId=${superheroList.id})}" onclick="return confirm('Er du sikker?')">
+                <button class="slet" type="button">Delete hero</button>
             </a>
+
         </td>
     </tr>
     </tbody>

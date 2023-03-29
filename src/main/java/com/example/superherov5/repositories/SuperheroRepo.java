@@ -1,7 +1,5 @@
 package com.example.superherov5.repositories;
 
-import com.example.superherov5.dto.City;
-import com.example.superherov5.dto.PowerCount;
 import com.example.superherov5.dto.SuperHeroForm;
 import com.example.superherov5.dto.SuperPower;
 import com.example.superherov5.model.Superhero;
@@ -49,7 +47,7 @@ public class SuperheroRepo implements ISuperheroRepo{
                 String heroName = rs.getString("heroname");
                 String realName = rs.getString("realname");
                 int creationYear = rs.getInt("creationyear");
-                superheroes.add(new Superhero(heroName, realName, creationYear));
+                superheroes.add(new Superhero(id, heroName, realName, creationYear));
             }
             return superheroes;
         } catch (SQLException e) {
@@ -57,62 +55,68 @@ public class SuperheroRepo implements ISuperheroRepo{
         }
     }
 
-    public Superhero getSuperhero(String name) {
-        Superhero superheroObj = null;
+    public SuperHeroForm findSuperHeroById(int id) {
+        SuperHeroForm superheroForm = null;
         try {
-            SQL = "SELECT * FROM superhero WHERE heroname = ?";
-            ps = connect().prepareStatement(SQL);
-            ps.setString(1, name);
-            rs = ps.executeQuery();
-            if(rs.next()) {
+            String SQL = "SELECT superhero.id, superhero.heroname, superhero.realname, superhero.creationyear, city.cityname " +
+                    "FROM superhero " +
+                    "INNER JOIN city ON superhero.cityid = city.id WHERE superhero.id = ?";
+            PreparedStatement ps = connect().prepareStatement(SQL);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int heroId = rs.getInt("id");
                 String heroName = rs.getString("heroname");
                 String realName = rs.getString("realname");
                 int creationYear = rs.getInt("creationyear");
-                superheroObj = new Superhero(heroName, realName, creationYear);
+                String city = rs.getString("cityname");
+                List<String> powerList = getSuperheroPowers(id);
+                superheroForm = new SuperHeroForm(heroId, heroName, realName, creationYear, city, powerList);
             }
-            return superheroObj;
+            rs.close();
+            ps.close();
+            connect().close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return superheroForm;
     }
 
-    public List<SuperPower> getHeroAndPowers() {
-        List<SuperPower> superheroes = new ArrayList<>();
+    public List<String> getSuperheroPowers(int superheroId) {
+        List<String> powerList = new ArrayList<>();
         try {
-            SQL = "SELECT heroname, powername FROM superhero " +
-                    "JOIN superheropower ON superhero.id = superheropower.superheroid " +
-                    "JOIN superpower ON superheropower.superpowerid  = superpower.id";
-            ps = connect().prepareStatement(SQL);
-            rs = ps.executeQuery();
+            String SQL = "SELECT superpower.powername FROM superheropower " +
+                    "INNER JOIN superpower ON superheropower.superpowerid = superpower.id WHERE superheropower.superheroid = ?";
+            PreparedStatement ps = connect().prepareStatement(SQL);
+            ps.setInt(1, superheroId);
+            ResultSet rs = ps.executeQuery();
 
-            while(rs.next()) {
-                SuperPower currentPower = new SuperPower();
-
-                String heroName = rs.getString("heroname");
-                String powerName = rs.getString("powername");
-
-                List<String> powers = new ArrayList<>();
-                currentPower.setPowers(powers);
-                currentPower.addSuperPower(powerName);
-                currentPower.setHeroName(heroName);
-
-                superheroes.add(currentPower);
+            while (rs.next()) {
+                String power = rs.getString("powername");
+                powerList.add(power);
             }
-            return superheroes;
+            rs.close();
+            ps.close();
+            connect().close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return powerList;
     }
 
-    public SuperPower getPowersForOne(String heroName) {
+
+    public SuperPower getPowersForOne(int heroId) {
         SuperPower superPower = null;
         try {
-            SQL = "SELECT heroname, powername FROM superhero " +
-                    "JOIN superheropower ON superhero.id = superheropower.superheroid " +
-                    "JOIN superpower ON superheropower.superpowerid  = superpower.id " +
-                    "AND heroname = ?";
+            SQL = "SELECT superhero.heroname, superpower.powername " +
+                    "FROM superhero " +
+                    "INNER JOIN superheropower ON superhero.id = superheropower.superheroid " +
+                    "INNER JOIN superpower ON superheropower.superpowerid = superpower.id " +
+                    "WHERE superhero.id = ?";
+
             ps = connect().prepareStatement(SQL);
-            ps.setString(1, heroName);
+            ps.setInt(1, heroId);
             rs = ps.executeQuery();
             String heroname = "";
             List<String> results = new ArrayList<>();
@@ -129,7 +133,7 @@ public class SuperheroRepo implements ISuperheroRepo{
     public List<String> getCities() {
         List<String> cities = new ArrayList<>();
         try {
-            SQL = "SELECT * FROM city";
+            SQL = "SELECT * FROM city ORDER BY cityname ASC";
             stmt = connect().createStatement();
             rs = stmt.executeQuery(SQL);
             while(rs.next()) {
@@ -145,7 +149,7 @@ public class SuperheroRepo implements ISuperheroRepo{
     public List<String> getSuperPowers() {
         List<String> superPower = new ArrayList<>();
         try {
-            SQL = "SELECT * FROM superpower";
+            SQL = "SELECT powername FROM superpower ORDER BY powername ASC";
             stmt = connect().createStatement();
             rs = stmt.executeQuery(SQL);
             while(rs.next()) {
@@ -158,6 +162,7 @@ public class SuperheroRepo implements ISuperheroRepo{
         }
     }
 
+    //CREATE Superhero
     public void addSuperhero(SuperHeroForm form) {
         try {
             // ID's
@@ -216,38 +221,93 @@ public class SuperheroRepo implements ISuperheroRepo{
         }
     }
 
-    public void updateHero(SuperHeroForm form, String heroName) {
+    //UPDATE Superhero
+    public void updateHero(int id, SuperHeroForm form) {
         try {
-            int heroId = 0;
-            SQL = "SELECT ID FROM superhero WHERE heroname = ?";
-            ps = connect().prepareStatement(SQL);
-            ps.setString(1, heroName);
-            rs = ps.executeQuery();
-            if(rs.next()) {
-                heroId = rs.getInt("id");
+            String cityQuery = "SELECT id FROM city WHERE cityname = ?";
+            PreparedStatement cityPs = connect().prepareStatement(cityQuery);
+            cityPs.setString(1, form.getCity());
+            ResultSet cityRs = cityPs.executeQuery();
+            int cityId = 0;
+            if (cityRs.next()) {
+                cityId = cityRs.getInt("id");
             }
-            SQL = "UPDATE superhero SET heroname = ?. realname = ?, creationyear = ?, cityid = ? WHERE id = ?";
-            ps = connect().prepareStatement(SQL);
-            ps.setInt(1, form.getHeroId());
-            ps.setString(2, form.getHeroName());
-            ps.setString(3, form.getRealName());
-            ps.setInt(4, form.getCreationYear());
-            ps.setString(5, form.getCity());
+            cityRs.close();
+            cityPs.close();
+
+            // Then, update the superhero using the fetched cityid
+            String SQL = "UPDATE superhero SET heroname = ?, realname = ?, creationyear = ?, cityid = ? WHERE id = ?";
+            PreparedStatement ps = connect().prepareStatement(SQL);
+            ps.setString(1, form.getHeroName());
+            ps.setString(2, form.getRealName());
+            ps.setInt(3, form.getCreationYear());
+            ps.setInt(4, cityId);
+            ps.setInt(5, id);
             ps.executeUpdate();
-
-
-
         } catch(SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        deleteSuperheroPowers(id);
+        addSuperheroPowers(id, form.getPowerList());
+    }
+
+    public void deleteSuperheroPowers(int heroId) {
+        try {
+            SQL = "DELETE FROM superheropower WHERE superheroid = ?";
+            ps = connect().prepareStatement(SQL);
+            ps.setInt(1, heroId);
+            ps.executeUpdate();
+            ps.close();
+            connect().close();
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void deleteHero(String heroName) {
+
+    public void addSuperheroPowers(int heroId, List<String> powers) {
+        PreparedStatement localPs;
         try {
-            int heroId = 0;
-            SQL = "SELECT id FROM superhero WHERE heroname = ?";
+            String SQL = "INSERT INTO superheropower (superheroid, superpowerid) VALUES (?, ?)";
+            localPs = connect().prepareStatement(SQL);
+
+            for (String powerName : powers) {
+                int powerId = getPowerId(powerName);
+                localPs.setInt(1, heroId);
+                localPs.setInt(2, powerId);
+                localPs.addBatch();
+            }
+
+            localPs.executeBatch();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getPowerId(String powerName) {
+        int powerId = 0;
+        String SQL = "SELECT id FROM superpower WHERE powername = ?";
+        try (Connection connection = connect();
+             PreparedStatement ps = connection.prepareStatement(SQL)) {
+            ps.setString(1, powerName);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    powerId = rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return powerId;
+    }
+
+    //DELETE Superhero
+    public void deleteHero(int heroId) {
+        try {
+            SQL = "SELECT id FROM superhero WHERE id = ?";
             ps = connect().prepareStatement(SQL);
-            ps.setString(1, heroName);
+            ps.setInt(1, heroId);
             rs = ps.executeQuery();
             if (rs.next()) {
                 heroId = rs.getInt("id");
@@ -258,15 +318,16 @@ public class SuperheroRepo implements ISuperheroRepo{
             ps.setInt(1, heroId);
             ps.executeUpdate();
 
-            SQL = "DELETE FROM superhero WHERE heroname = ?";
+            SQL = "DELETE FROM superhero WHERE id = ?";
             ps = connect().prepareStatement(SQL);
-            ps.setString(1, heroName);
+            ps.setInt(1, heroId);
             ps.executeUpdate();
 
         } catch(SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
 
 
 }

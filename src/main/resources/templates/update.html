@@ -6,26 +6,25 @@
     <title>Update Hero</title>
 </head>
 <body>
-    <h1>Update your Hero</h1>
+<h1>Edit Superhero</h1>
+<form action="#" th:action="@{/update/{id}(id=${superhero.heroId})}" method="post" th:object="${superhero}">
+    <label>Hero Name:</label>
+    <input type="text" th:field="*{heroName}" /><br/>
 
-    <form action="/update"  method="post" th:object="${superhero}">
-        <label>Hero Name:</label>
-        <input type="text" th:field="${heroName}" /><br/>
+    <label>Real Name:</label>
+    <input type="text" th:field="*{realName}" /><br/>
 
-        <label>Real Name:</label>
-        <input type="text" th:field="${realName}" /><br/>
+    <label>Creation Year:</label>
+    <input type="text" th:field="*{creationYear}" /><br/>
 
-        <label>Creation Year:</label>
-        <input type="text" th:field="${creationYear}" /><br/>
+    <label>City:</label>
+    <select th:field="*{city}">
+        <option th:each="cities : ${listCities}" th:value="${cities}" th:text="${cities}" />
+    </select>
 
-        <label>City:</label>
-        <select th:field="${city}">
-            <option th:each="cities : ${listCities}" th:value="${cities}" th:text="${cities}" />
-        </select>
-
-        <label>Superpowers:</label>
+    <label>Superpowers:</label>
         <div th:each="power: ${listSuperPowers}">
-            <input type="checkbox" th:field="${powerList}" th:value="${power}" th:text="${power}">
+            <input type="checkbox" th:field="*{powerList}" th:value="${power}" th:text="${power}" th:checked="${superhero.powerList.contains(power)}">
         </div>
 
         <br/>

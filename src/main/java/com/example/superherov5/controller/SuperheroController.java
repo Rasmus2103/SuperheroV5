@@ -28,9 +28,9 @@ public class SuperheroController {
         return "superheroList";
     }
 
-    @GetMapping("superheroes/powers/{heroName}")
-    public String getPowers(@PathVariable("heroName") String heroName, Model model) {
-        SuperPower superPower = superheroRepo.getPowersForOne(heroName);
+    @GetMapping("superheroes/powers/{heroId}")
+    public String getPowers(@PathVariable("heroId") int heroId, Model model) {
+        SuperPower superPower = superheroRepo.getPowersForOne(heroId);
         model.addAttribute("name", superPower.getHeroName());
         model.addAttribute("powers", superPower.getPowers());
         return "powers";
@@ -62,33 +62,28 @@ public class SuperheroController {
         return "createdResult";
     }
 
-    @GetMapping("superheroes/update/{heroName}")
-    public String showUpdateHero(@PathVariable("heroName") String heroName, Model model) {
-        model.addAttribute("superhero", superheroRepo.getSuperhero(heroName));
-
-        List<String> listCities = superheroRepo.getCities();
-        model.addAttribute("listCities", listCities);
-
-        List<String> listSuperPowers = superheroRepo.getSuperPowers();
-        model.addAttribute("listSuperPowers", listSuperPowers);
-
+    @GetMapping("/update/{id}")
+    public String showEditForm(@PathVariable("id") int id, Model model) {
+        SuperHeroForm superhero = superheroRepo.findSuperHeroById(id);
+        List<String> allPowers = superheroRepo.getSuperPowers();
+        model.addAttribute("superhero", superhero);
+        model.addAttribute("listCities", superheroRepo.getCities());
+        model.addAttribute("listSuperPowers", allPowers);
         return "update";
     }
 
-    /*@PostMapping("/update")
-    public String updateHero(@ModelAttribute SuperHeroForm form, Model model){
-        superheroRepo.updateHero(form);
-        List<String> listCities = superheroRepo.getCities();
-        model.addAttribute("listCities", listCities);
+    @PostMapping("/update/{id}")
+    public String updateSuperhero(@PathVariable("id") int id, @ModelAttribute("superhero") SuperHeroForm superhero, Model model) {
+        superheroRepo.updateHero(id, superhero);
+        model.addAttribute("successMessage", "Superhero successfully updated!");
+        return "createdResult";
+    }
 
-        List<String> listSuperPowers = superheroRepo.getSuperPowers();
-        model.addAttribute("listSuperPowers", listSuperPowers);
-        return "redirect:/superheroes";
-    }*/
 
-    @GetMapping("superheroes/slet/{heroName}")
-    public String deleteHero(@PathVariable("heroName") String heroName, Model model) {
-        superheroRepo.deleteHero(heroName);
+
+    @GetMapping("superheroes/slet/{heroId}")
+    public String deleteHero(@PathVariable("heroId") int heroId, Model model) {
+        superheroRepo.deleteHero(heroId);
         model.addAttribute("superheroList", superheroRepo.getSuperheroes());
         return "redirect:/superheroes";
     }
