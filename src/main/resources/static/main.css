@@ -8,7 +8,7 @@
 }
 
 body {
-    background: #33CCCC; /* Fallback */
+    background: #33CCCC;
     animation: color 9s infinite linear;
     padding: 2em;
 }

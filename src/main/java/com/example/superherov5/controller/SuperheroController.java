@@ -76,6 +76,7 @@ public class SuperheroController {
     public String updateSuperhero(@PathVariable("id") int id, @ModelAttribute("superhero") SuperHeroForm superhero, Model model) {
         superheroRepo.updateHero(id, superhero);
         model.addAttribute("successMessage", "Superhero successfully updated!");
+        System.out.println(superhero);
         return "createdResult";
     }
 

@@ -87,11 +87,11 @@ public class SuperheroRepo implements ISuperheroRepo{
         List<String> powerList = new ArrayList<>();
         try {
             String SQL = "SELECT superpower.powername FROM superheropower " +
-                    "INNER JOIN superpower ON superheropower.superpowerid = superpower.id WHERE superheropower.superheroid = ?";
+                    "INNER JOIN superpower ON superheropower.superpowerid = superpower.id " +
+                    "WHERE superheropower.superheroid = ?";
             PreparedStatement ps = connect().prepareStatement(SQL);
             ps.setInt(1, superheroId);
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
                 String power = rs.getString("powername");
                 powerList.add(power);
